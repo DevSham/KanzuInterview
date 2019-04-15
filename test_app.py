@@ -6,10 +6,10 @@ import json
 def test_all():
     with app.test_client() as T:
         response = T.get('Article/api/v1/entry')
-        info = json.loads(response.data)
-        diary = info['Article_entries'][0]['CategoryName']
+        info = response.get_json()
+        cat = info['Article_entries'][0]['CategoryName']
         assert type(info) == dict
-        assert diary == 'Sports'
+        assert cat == 'Sports'
 # Test method to add a category API
 
 
@@ -31,7 +31,7 @@ def test_entry():
 def test_specific_entry():
     with app.test_client() as T:
         response = T.get('/Article/api/v1/entry/1')
-        info = json.loads(response.data)
+        info = response.get_json()
         my_cat1 = info['My_Category'][0]['id']
         my_cat2 = info['My_Category'][0]['CategoryName']
         assert type(info) == dict
@@ -46,7 +46,7 @@ def test_update_entry():
                          json={
                              'CategoryName': 'Love'
                          })
-        info = json.loads(response.data)
+        info = response.get_json()
         mod1 = info['Category'][0]['CategoryName']
         assert mod1 == 'Love'
 
@@ -54,7 +54,7 @@ def test_update_entry():
 def test_delete_category():
     with app.test_client() as T:
         response = T.delete('/Article/api/v1/entry/2')
-        info = json.loads(response.data)
+        info = response.get_json()
         del1 = info['Categories'][0]['id']
         del2 = info['Categories'][0]['CategoryName']
         assert del1 != 2
